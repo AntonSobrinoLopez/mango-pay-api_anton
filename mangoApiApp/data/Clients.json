@@ -1,0 +1,3 @@
+[{ "model": "Clients","fields":{"name": "Anton","RegisteredNamestring": "AntonSL","ClientId": "1" }},
+{ "model": "Clients","fields":{"name": "Pepe","RegisteredNamestring": "Pepon","ClientId": "2"}}
+]

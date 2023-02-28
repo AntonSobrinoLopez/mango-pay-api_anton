@@ -1,19 +1,38 @@
- from mangoApiApp.models import Clients
+from mangoApiApp.models import Clients
+from mangoApiApp.models import PayInobject
+from mangoApiApp.models import User
+from mangoApiApp.models import DirectDebitWebPayInobject
+from mangoApiApp.models import PayPalWebPayInobject
  
  ejem = 
  >>> member1 = Member(firstname='Tobias', lastname='Refsnes')
  >>> for x in members_list:
 >>>   	x.save()
- 
+
+
+cliente1=Clients(name='Pepon', RegisteredNamestring='2',PrimaryThemeColour="#FF4500",PrimaryButtonColour='#008080',Logos='Logos',TechEmails='qwert@caca.com',AdminEmails='qwert@caca.com',FraudEmails='fraud@caca.com',Billing_Emails='Billing_Emails@caca.com',PlatformCategorization='',PlatformDescription='',PlatformURL='',HeadquartersAddress='Far away', TaxNumber='',CompanyReference='') 
 cliente2=Clients(name='Anton123', RegisteredNamestring='1',PrimaryThemeColour="#FF4500",PrimaryButtonColour='#008080',Logos='Logos',TechEmails='qwert@caca.com',AdminEmails='qwert@caca.com',FraudEmails='fraud@caca.com',Billing_Emails='Billing_Emails@caca.com',PlatformCategorization='',PlatformDescription='',PlatformURL='',HeadquartersAddress='Far away', TaxNumber='',CompanyReference='')
 
+user1 = User(email="anton#anton.com",kyc_level="")
+
+email = models.EmailField(null=False) # api_name='Email'
+    kyc_level = models.CharField(choices=constants.KYC_LEVEL, default=constants.KYC_LEVEL.light) # api_name='KYCLevel'
+    terms_and_conditions_accepted = models.BooleanField() # api_name='TermsAndConditionsAccepted'
+    terms_and_conditions_accepted_date = models.DateTimeField() # api_name='TermsAndConditionsAcceptedDate'
+    user_category = models.CharField() # api_name='UserCategory'
 
 
-user1 = User(username='Pepe',password='12345',is_superuser=True)
+directdebit=DirectDebitWebPayInobject()
 
-<django.db.models.fields.AutoField: id>, 
-<django.db.models.fields.CharField: password>, 
-<django.db.models.fields.DateTimeField: last_login>, 
-<django.db.models.fields.BooleanField: is_superuser>,
- <django.db.models.fields.CharField: username>, <django.db.models.fields.CharField: first_name>, <django.db.models.fields.CharField: last_name>, <django.db.models.fields.EmailField: email>, <django.db.models.fields.BooleanField: is_staff>, <django.db.models.fields.BooleanField: is_active>, <django.db.models.fields.DateTimeField: date_joined>, <django.db.models.fields.related.ManyToManyField: groups>, <django.db.models.fields.related.ManyToManyField: user_permissions>) 
->>>
+from mangoApiApp.models import CardWebPayInobject
+
+card1 = CardWebPayInobject(ReturnURL="https://www.django-rest-framework.org/",CardType="2234567788")
+card2 = CardWebPayInobject(ReturnURL="https://www.django-rest-framework.org/",CardType="456889000")
+
+
+from mangoApiApp.models import PayPalWebPayInobject
+
+pp = PayPalWebPayInobject(Id='12344556',Tag="MyTAg",CreationDate=None)
+pp2 = PayPalWebPayInobject(Id='12344557',Tag="MyTAg",CreationDate=None)
+
+py manage.py .mangoApiApp\data\Clients.json

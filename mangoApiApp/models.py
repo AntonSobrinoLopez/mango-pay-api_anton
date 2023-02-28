@@ -15,7 +15,9 @@ from .base import BaseApiModel
 from . import constants
 from .query import InsertQuery, UpdateQuery, SelectQuery, ActionQuery
 from .utils import Money, Address, Birthplace
-import time
+import time,datetime
+from .constants import EXECUTION_TYPE_CHOICES,PAYIN_PAYMENT_TYPE,CARD_TYPE_CHOICES,SECURE_MODE_CHOICES,PAYIN_PAYMENT_TYPE,DIRECT_DEBIT_TYPE_CHOICES,SECURE_MODE_CHOICES,CULTURE_CODE_CHOICES,TRANSACTION_TYPE_CHOICES,NATURE_CHOICES, PAYIN_PAYMENT_TYPE
+from .utils import Choices
 
 class BaseModel(BaseApiModel):
     # id = PrimaryKeyField(api_name='Id')
@@ -88,10 +90,10 @@ class User(BaseModel):
 class BankAccount(models.Model):
     # Quitar default, son solo para ejemplo
     user = ForeignKeyField(User, api_name='UserId', related_name='bankaccounts')
-    type = models.CharField(null=False, default="IBAN", max_length=100)
+    type = models.CharField(null=False, default="IBAN", max_length=255)
     owner_address = AddressField(null=False, default="")
-    owner_name = models.CharField(null=False, default="Joe", max_length=100)
-    tag = models.CharField(null=False, default="custom meta", max_length=100)
+    owner_name = models.CharField(null=False, default="Joe", max_length=255)
+    tag = models.CharField(null=False, default="custom meta", max_length=255)
     created_at = models.IntegerField(default=int(time.time()))
     active = models.BooleanField(default=True) # api_name='Active'
     
@@ -851,8 +853,8 @@ class Clients(models.Model):
     OPTION_ONE='PlatformCategorization.BusinessType'
     OPTION_TWO='PlatformCategorization.Sector'
     OPTION_CHOICES=[
-        (OPTION_ONE, 'Option One'),
-         (OPTION_TWO, 'Option Two')]
+        (OPTION_ONE, 'BusinessType'),
+         (OPTION_TWO, 'Sector')]
 
     name= models.TextField()
     RegisteredNamestring = models.TextField()
@@ -864,16 +866,152 @@ class Clients(models.Model):
     AdminEmails=models.CharField(max_length=255, blank=True, null=True, verbose_name='Admin/Commercial Contact Emails', help_text='A comma-separated list of email addresses to use when contacting you for admin/commercial issues/communications.') #lista
     FraudEmails= models.CharField(max_length=255, blank=True, null=True, verbose_name='Admin/Commercial Contact Emails', help_text='A comma-separated list of email addresses to use when contacting you for admin/commercial issues/communications.') #lista
     Billing_Emails = models.CharField(max_length=255, blank=True, null=True, verbose_name='Admin/Commercial Contact Emails', help_text='A comma-separated list of email addresses to use when contacting you for admin/commercial issues/communications.') #lista
-    PlatformCategorization= models.CharField(max_length=100,choices= OPTION_CHOICES)
+    PlatformCategorization= models.CharField(max_length=255,choices= OPTION_CHOICES)
     PlatformDescription=models.TextField()
     PlatformURL = models.TextField()
-    HeadquartersAddress= models.CharField(max_length=100,choices= OPTION_CHOICES_ADDRESS)
+    HeadquartersAddress= models.CharField(max_length=255,choices= OPTION_CHOICES_ADDRESS)
     TaxNumber=models.TextField()
-    CompanyReference = models.CharField(max_length=100)
+    CompanyReference = models.CharField(max_length=255)
 
 class PayInobject(models.Model):
-    PaymentTypePayIn=models.CharField(choices='PAYIN_PAYMENT_TYPE')
-    ExecutionType = models.CharField(choices='EXECUTION_TYPE_CHOICES')
+    PaymentTypePayIn = models.CharField(choices=PAYIN_PAYMENT_TYPE, max_length=255)
+    ExecutionType = models.CharField(choices=EXECUTION_TYPE_CHOICES,max_length=255)
+
+
+class CardWebPayInobject(models.Model):
+    OPTION_BILLING_1='Billing.FirstName'
+    OPTION_BILLING_2='Billing.LastName'
+    OPTION_BILLING_3 = 'Billing.Addres'
+    OPTION_CHOICES_BILLING=[
+        (OPTION_BILLING_1, 'Option One'),
+        (OPTION_BILLING_2, 'Option Two'),
+        (OPTION_BILLING_3, 'Option Three')
+        ]
+    
+    OPTION_BILLING_ADDRESS_1 ='Shipping.FirstName'
+    OPTION_BILLING_ADDRESS_2 ='Shipping.LastName'
+    OPTION_BILLING_ADDRESS_3 = 'Shipping.Address'
+    OPTION_BILLING_ADDRESS_4 = 'Shipping.Address.AddressLine1'
+    OPTION_BILLING_ADDRESS_5 = 'Shipping.Address.AddressLine2'
+    OPTION_BILLING_ADDRESS_6 = 'Shipping.Address.City'
+    OPTION_BILLING_ADDRESS_7 = 'Shipping.Address.Region'
+    OPTION_BILLING_ADDRESS_8 = 'Shipping.Address.PostalCode'
+    OPTION_BILLING_ADDRESS_9 = 'Shipping.Address.Country'
+    OPTION_BILLING_ADDRESS =[
+        (OPTION_BILLING_ADDRESS_1, 'FirstName'),
+        (OPTION_BILLING_ADDRESS_2, 'LastName'),
+        (OPTION_BILLING_ADDRESS_3, 'Address'),
+        (OPTION_BILLING_ADDRESS_4, 'AddressLine1'),
+        (OPTION_BILLING_ADDRESS_5, 'AddressLine2'),
+        (OPTION_BILLING_ADDRESS_6, 'City'),
+        (OPTION_BILLING_ADDRESS_7, 'Region'),
+        (OPTION_BILLING_ADDRESS_8, 'PostalCode'),
+        (OPTION_BILLING_ADDRESS_9, 'Country'),
+        
+    ]
+
+    OPTION_SHIPPING_1='shipping.FirstName'
+    OPTION_SHIPPING_2 ="Shipping.LastName"
+    OPTION_SHIPPING_3= OPTION_BILLING_ADDRESS
+    OPTION_CHOICES_SHIPPING=[
+        (OPTION_BILLING_1, 'Option One'),
+        (OPTION_BILLING_2, 'Option Two'),
+        (OPTION_BILLING_3, 'Option Three')
+        ]
+    
+    ReturnURL=models.CharField(max_length=225)
+    CardType =models.CharField(choices=CARD_TYPE_CHOICES,max_length=255)
+    SecureMode=models.CharField(max_length=255,choices=SECURE_MODE_CHOICES)
+    Billing=models.CharField(max_length=255,choices=OPTION_CHOICES_BILLING)
+    Culture= models.CharField(max_length=3)
+    Shipping=models.CharField(choices=OPTION_CHOICES_SHIPPING, max_length=255)
+    TemplateURL = models.CharField(max_length=255)
+    StatementDescriptor= models.CharField(max_length=255)
+    RedirectURLstring= models.CharField(max_length=255)
+
+
+class DirectDebitWebPayInobject(models.Model):
+    PaymentTypePayIn = models.CharField(choices=PAYIN_PAYMENT_TYPE, max_length=255)
+    ExecutionType = models.CharField(choices=EXECUTION_TYPE_CHOICES,max_length=255)
+    ReturnURL = models.CharField(max_length=255,default='URL')
+    DirectDebitType= models.CharField(choices= DIRECT_DEBIT_TYPE_CHOICES, max_length=255)
+    SecureMode=models.CharField(choices=SECURE_MODE_CHOICES,max_length=255)
+    Culture=models.CharField(choices=CULTURE_CODE_CHOICES,max_length=255)
+    TemplateURL=models.CharField(max_length=255)
+    RedirectURL=models.CharField(max_length=255)
+
+
+class PayPalWebPayInobject(models.Model):
+
+    SHIPPING_ADDRESS_TYPE_CHOICES = Choices(
+        ('ShippingAddress.RecipientName'),
+        ('ShippingAddress.Address'),
+        ('ShippingAddress.Address.AddressLine1'),
+        ('ShippingAddress.Address.AddressLine2'),
+        ('ShippingAddress.Address.City'),
+        ('ShippingAddress.Address.Region'),
+        ('ShippingAddress.Address.PostalCode'),
+        ('ShippingAddress.Address.Country')
+        )
+    
+    DEBITFUNDS_TYPE_CHOICES = Choices(
+        ('DebitedFunds.Currency'),
+        ('DebitedFunds.Amount')
+    )
+    
+    CREDITFUNDS_TYPE_CHOICES= Choices(
+        ('CreditedFunds.Currency'),
+        ('CreditedFunds.Amount')
+    )
+
+    FEES_TYPE_CHOICES = Choices(
+        ('Fees.Currency'),
+        ('Fees.Amount')
+    )
+
+    STATUS_PAYPAL_CHOICES= Choices(
+        ('CREATED','created'),
+        ('SUCCEEDED','succeeded'),
+        ('FAILED', 'failed')
+    )
+ 
+    # Id=models.CharField(max_length=255)
+    Tag=models.CharField(max_length=255)
+    CreationDate=models.CharField(blank=True, max_length=255)
+    AuthorId=models.CharField(max_length=255)
+    CreditedUserId= models.CharField(max_length=255)
+    DebitedFunds = models.CharField(max_length=255,choices=DEBITFUNDS_TYPE_CHOICES)
+    CreditedFunds= models.CharField(max_length=255,choices=CREDITFUNDS_TYPE_CHOICES)
+    Fees=models.CharField(max_length=255, choices=FEES_TYPE_CHOICES)
+    Status=models.CharField(max_length=255, choices=STATUS_PAYPAL_CHOICES)
+    ResultMessage = models.CharField(max_length=255)
+    ExecutionDate = models.CharField(blank=True, max_length=255)
+    Type = models.CharField(max_length=255, choices=TRANSACTION_TYPE_CHOICES)
+    Nature = models.CharField(max_length=255, choices=NATURE_CHOICES)
+    CreditedWalletId = models.CharField(max_length=255)
+    DebitedWalletId = models.CharField(max_length=255)
+    PaymentTypePayIn = models.CharField(max_length=255, choices=PAYIN_PAYMENT_TYPE)
+    ExecutionType = models.CharField(max_length=255, choices=EXECUTION_TYPE_CHOICES)
+    RedirectURL = models.CharField(max_length=255)
+    Culture = models.CharField(max_length=255, choices=CULTURE_CODE_CHOICES)
+    ShippingAddress = models.CharField(max_length=255, choices=SHIPPING_ADDRESS_TYPE_CHOICES)
+    PaypalBuyerAccountEmail = models.CharField(max_length=255)
+    StatementDescriptor = models.CharField(max_length=255)
+    def save(self, *args, **kwargs):
+        if self.CreationDate== None:
+            self.CreationDate= str(int(datetime.datetime.now().timestamp()))
+        if self.ExecutionDate == None:
+            self.ExecutionDate= str(int(datetime.datetime.now().timestamp()))
+
+  
+
+    
+
+
+
+
+
+   
 
 
 

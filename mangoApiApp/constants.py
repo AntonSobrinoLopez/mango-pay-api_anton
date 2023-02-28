@@ -338,3 +338,25 @@ DEPOSIT_STATUS_CHOICES = Choices(
     ('SUCCEEDED', 'succeeded', 'Succeeded'),
     ('FAILED', 'failed', 'Failed')
 )
+
+CULTURE_CODE_CHOICES=Choices(
+    ('DE','de'),
+    ('EN','en'),
+    ('DA','da'),
+    ('ES','es'),
+    ('ET','et'),
+    ('FI','fi'),
+    ('FL','fl'),
+    ('FR','pr'),
+    ('EL','el'),
+    ('HU','hu'),
+    ('IT', 'it'),
+    ('NL','nl'),
+    ('NO','no'),
+    ('PL','pl'),
+    ('PT','pt'),
+    ('SK','sk'),
+    ('SV'),'sv',
+    ('CS','cs')
+
+)
